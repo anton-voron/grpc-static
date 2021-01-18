@@ -11,8 +11,20 @@ message SumResponse {
     int32 sum_result = 1;
 }
 
+message PrimeNumberDecompositonRequest {
+    int32 number = 1;
+}
+
+message PrimeNumberDecompositonResponse {
+    int32 prime_factor = 1;
+
+}
+
 service CalculatorService {
 
-    //unari
+    // Unary API
     rpc Sum (SumRequest) returns (SumResponse) {};
+
+    // Streaming API
+    rpc PrimeNumberDecompositon (PrimeNumberDecompositonRequest) returns (stream PrimeNumberDecompositonResponse) {};
 }

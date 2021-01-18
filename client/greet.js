@@ -4,7 +4,7 @@ const services = require('../server/protos/greet_grpc_pb');
 
 class ClientApp {
 
-    sendReqquest(client) {
+    sendRequest(client) {
         const greeting = new greets.Greeting();
         greeting.setFirstName('Jerry');
         greeting.setLastName('Tom');
@@ -21,6 +21,33 @@ class ClientApp {
         })
     }
 
+    sendRequestManyTimes(client) {
+        const greeting = new greets.Greeting();
+        greeting.setFirstName('Anton');
+        greeting.setLastName('Voron');
+
+        const request = new greets.GreetManyTimesRequest();
+        request.setGreeting(greeting);
+
+        const socket = client.greetManyTimes(request, () => { });
+
+        socket.on('data', response => {
+            console.log(`Client streaming response: ${response.getResult()}`);
+        })
+
+        socket.on('status', status => {
+            console.log(status.details);
+        })
+
+        socket.on('end', () => {
+            console.log('Streaming Ended!');
+        })
+
+        socket.on('error', error => {
+            console.error(error.details);
+        })
+    }
+
     main() {
         console.log("Hello form client");
         let client = new services.GreetServiceClient(
@@ -29,7 +56,8 @@ class ClientApp {
         );
 
         // we do stuff!
-        this.sendReqquest(client);
+        this.sendRequest(client);
+        this.sendRequestManyTimes(client);
     }
 };
 

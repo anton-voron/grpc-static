@@ -19,6 +19,31 @@ class ClientApp {
         })
     }
 
+    callPrimeNumberDecompositon(client) {
+        const request = new calc.PrimeNumberDecompositonRequest();
+
+        let number = 20;
+        request.setNumber(number);
+
+        const socket = client.primeNumberDecompositon(request, () => { });
+
+        socket.on('data', response => {
+            console.log(`PrimeFactor Found: ${response.getPrimeFactor()}`);
+        })
+
+        socket.on('status', status => {
+            console.log(status.details);
+        })
+
+        socket.on('end', () => {
+            console.log('Streaming Ended!');
+        })
+
+        socket.on('error', error => {
+            console.error(error.details);
+        })
+    }
+
     main() {
         let client = new calcServices.CalculatorServiceClient(
             'localhost:50051',
@@ -29,6 +54,7 @@ class ClientApp {
 
         // we do stuff!
         this.sendRequest(client);
+        this.callPrimeNumberDecompositon(client);
     }
 };
 
