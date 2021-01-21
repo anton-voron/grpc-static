@@ -15,15 +15,15 @@ function deserialize_greet_GreetManyTimesRequest(buffer_arg) {
   return greet_pb.GreetManyTimesRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_greet_GreetManyTimesResponce(arg) {
-  if (!(arg instanceof greet_pb.GreetManyTimesResponce)) {
-    throw new Error('Expected argument of type greet.GreetManyTimesResponce');
+function serialize_greet_GreetManyTimesResponse(arg) {
+  if (!(arg instanceof greet_pb.GreetManyTimesResponse)) {
+    throw new Error('Expected argument of type greet.GreetManyTimesResponse');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_greet_GreetManyTimesResponce(buffer_arg) {
-  return greet_pb.GreetManyTimesResponce.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_greet_GreetManyTimesResponse(buffer_arg) {
+  return greet_pb.GreetManyTimesResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_greet_GreetRequest(arg) {
@@ -37,15 +37,37 @@ function deserialize_greet_GreetRequest(buffer_arg) {
   return greet_pb.GreetRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_greet_GreetResponce(arg) {
-  if (!(arg instanceof greet_pb.GreetResponce)) {
-    throw new Error('Expected argument of type greet.GreetResponce');
+function serialize_greet_GreetResponse(arg) {
+  if (!(arg instanceof greet_pb.GreetResponse)) {
+    throw new Error('Expected argument of type greet.GreetResponse');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_greet_GreetResponce(buffer_arg) {
-  return greet_pb.GreetResponce.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_greet_GreetResponse(buffer_arg) {
+  return greet_pb.GreetResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_greet_LongGreetRequest(arg) {
+  if (!(arg instanceof greet_pb.LongGreetRequest)) {
+    throw new Error('Expected argument of type greet.LongGreetRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_greet_LongGreetRequest(buffer_arg) {
+  return greet_pb.LongGreetRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_greet_LongGreetResponse(arg) {
+  if (!(arg instanceof greet_pb.LongGreetResponse)) {
+    throw new Error('Expected argument of type greet.LongGreetResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_greet_LongGreetResponse(buffer_arg) {
+  return greet_pb.LongGreetResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 
@@ -56,23 +78,35 @@ var GreetServiceService = exports.GreetServiceService = {
     requestStream: false,
     responseStream: false,
     requestType: greet_pb.GreetRequest,
-    responseType: greet_pb.GreetResponce,
+    responseType: greet_pb.GreetResponse,
     requestSerialize: serialize_greet_GreetRequest,
     requestDeserialize: deserialize_greet_GreetRequest,
-    responseSerialize: serialize_greet_GreetResponce,
-    responseDeserialize: deserialize_greet_GreetResponce,
+    responseSerialize: serialize_greet_GreetResponse,
+    responseDeserialize: deserialize_greet_GreetResponse,
   },
-  // striaming API
+  // Server striaming API
   greetManyTimes: {
     path: '/greet.GreetService/GreetManyTimes',
     requestStream: false,
     responseStream: true,
     requestType: greet_pb.GreetManyTimesRequest,
-    responseType: greet_pb.GreetManyTimesResponce,
+    responseType: greet_pb.GreetManyTimesResponse,
     requestSerialize: serialize_greet_GreetManyTimesRequest,
     requestDeserialize: deserialize_greet_GreetManyTimesRequest,
-    responseSerialize: serialize_greet_GreetManyTimesResponce,
-    responseDeserialize: deserialize_greet_GreetManyTimesResponce,
+    responseSerialize: serialize_greet_GreetManyTimesResponse,
+    responseDeserialize: deserialize_greet_GreetManyTimesResponse,
+  },
+  // Client striaming API
+  longGreet: {
+    path: '/greet.GreetService/LongGreet',
+    requestStream: true,
+    responseStream: false,
+    requestType: greet_pb.LongGreetRequest,
+    responseType: greet_pb.LongGreetResponse,
+    requestSerialize: serialize_greet_LongGreetRequest,
+    requestDeserialize: deserialize_greet_LongGreetRequest,
+    responseSerialize: serialize_greet_LongGreetResponse,
+    responseDeserialize: deserialize_greet_LongGreetResponse,
   },
 };
 
