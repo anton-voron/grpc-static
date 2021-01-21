@@ -54,12 +54,46 @@ class Application {
         })
     }
 
+    async sleep(interval) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => resolve(), interval);
+        })
+    }
+
+    async greetEveryone(socket, callback) {
+        socket.on('data', request => {
+            const firstName = request.getGreeting().getFirstName();
+            const lastName = request.getGreeting().getLastName();
+
+            const fullName = firstName + ' ' + lastName;
+            console.log('Hello, ', fullName);
+
+        })
+
+        socket.on('error', error => {
+            console.error(error);
+        });
+
+        socket.on('end', () => {
+            console.log('LongGreet ended!');
+        })
+
+        for (let i = 0; i < 10; i++) {
+            const response = new greets.GreetEveryoneResponse();
+            response.setResult('Paulo Kekel');
+            socket.write(response);
+            await this.sleep(200);
+        }
+    }
+
     main() {
         let Server = new grpc.Server();
         Server.addService(services.GreetServiceService, {
             greet: this.greet,
             greetManyTimes: this.greetManyTimes,
-            longGreet: this.longGreet
+            longGreet: this.longGreet,
+            greetEveryone: this.greetEveryone,
+            sleep: this.sleep
         });
         Server.bind('127.0.0.1:50051', grpc.ServerCredentials.createInsecure());
 

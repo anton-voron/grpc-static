@@ -1,6 +1,7 @@
 const grpc = require('grpc');
 const greets = require('../server/protos/greet_pb');
 const services = require('../server/protos/greet_grpc_pb');
+const readline = require('readline');
 
 class ClientApp {
 
@@ -77,6 +78,115 @@ class ClientApp {
         }, 1000);
     }
 
+    async readline(socket, greeting, callback) {
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout,
+            prompt: '> '
+        });
+
+        const commands = {
+            help() {
+                console.log('Comands: ' + Object.keys(commands).join(', '));
+            },
+            async ask() {
+                const firstName = await this.question('Your first name is: ', rl);
+
+                const lastName = await this.question('Your last name is: ', rl);
+                callback({ firstName, lastName });
+            },
+
+            send() {
+                const request = new greets.GreetEveryoneRequest();
+                request.setGreeting(greeting);
+                socket.write(request);
+            },
+            exit() {
+                rl.close();
+                socket.end();
+            },
+            buy() {
+                rl.close();
+                socket.end();
+            },
+            close() {
+                rl.close();
+                socket.end();
+            }
+        }
+
+        rl.on('line', line => {
+            line = line.trim();
+            const command = commands[line]?.bind(this);
+            if (command) {
+                command();
+            } else {
+                console.log('Unknown command');
+            }
+        }).on('close', () => {
+            console.log('Buy');
+            process.exit(0);
+        })
+    }
+
+    async question(question, rl) {
+        return new Promise((resolve, reject) => rl.question(question, answ => {
+            resolve(answ)
+        }));
+    }
+
+    sleep(interval) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => resolve(), interval);
+        })
+    }
+
+    async callGreetEveryone(client) {
+        const request = new greets.GreetEveryoneRequest();
+        const socket = client.greetEveryone(request, (error, response) => {
+            if (!error) {
+                console.log(`Server response: ${response.getResult()}`);
+            } else {
+                console.error(error);
+            }
+        });
+
+        socket.on('data', response => {
+            console.log(`Client streaming response: ${response.getResult()}`);
+        })
+
+        socket.on('status', status => {
+            console.log(status.details);
+        })
+
+        socket.on('end', () => {
+            console.log('Streaming Ended!');
+        })
+
+        socket.on('error', error => {
+            console.error(error.details);
+        });
+
+        // Read data from console
+        // const greeting = new greets.Greeting();
+        // await this.readline(socket, greeting, (answer) => {
+        //     const { firstName, lastName } = answer;
+        //     greeting.setFirstName(firstName);
+        //     greeting.setLastName(lastName);
+        // });
+
+        for (let i = 0; i < 10; i++) {
+            const greeting = new greets.Greeting();
+            greeting.setFirstName('Paulo');
+            greeting.setLastName('Moranie');
+
+            const request = new greets.GreetEveryoneRequest();
+            request.setGreeting(greeting);
+            socket.write(request);
+            await this.sleep(300);
+        }
+    }
+
     main() {
         console.log("Hello form client");
         let client = new services.GreetServiceClient(
@@ -87,7 +197,9 @@ class ClientApp {
         // we do stuff!
         // this.sendRequest(client);
         // this.sendRequestManyTimes(client);
-        this.callLongGreet(client);
+        // this.callLongGreet(client);
+
+        this.callGreetEveryone(client);
     }
 };
 
