@@ -5,6 +5,7 @@ const { write } = require('fs/promises');
 
 class Application {
 
+    // Unary communication API
     sum(socket, callback) {
         const response = new calc.SumResponse();
 
@@ -16,6 +17,8 @@ class Application {
         callback(null, response);
     }
 
+
+    // Server stream API
     primeNumberDecompositon(socket, callback) {
         let number = socket.request.getNumber();
         let devisor = 2;
@@ -37,11 +40,40 @@ class Application {
         socket.end();
     }
 
+
+    // Client stream API
+    computeAverage(socket, callback) {
+        // running summ and count
+        let sum = 0;
+        let count = 0;
+
+        socket.on('data', request => {
+            //inc summ
+            sum += request.getNumber();
+
+            console.log(`Got:  number ${request.getNumber()}`);
+            count += 1;
+        });
+
+        socket.on('error', error => {
+            console.error(error);
+        })
+
+        socket.on('end', () => {
+            const average = sum / count;
+            const response = new calc.ComputeAverageResponse();
+            response.setAverage(average);
+
+            callback(null, response);
+        })
+    }
+
     main() {
         let Server = new grpc.Server();
         Server.addService(calcService.CalculatorServiceService, {
             sum: this.sum,
-            primeNumberDecompositon: this.primeNumberDecompositon
+            primeNumberDecompositon: this.primeNumberDecompositon,
+            computeAverage: this.computeAverage
         });
         Server.bind('127.0.0.1:50051', grpc.ServerCredentials.createInsecure());
 

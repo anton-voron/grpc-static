@@ -4,6 +4,28 @@
 var grpc = require('grpc');
 var calculator_pb = require('./calculator_pb.js');
 
+function serialize_calculator_ComputeAverageRequest(arg) {
+  if (!(arg instanceof calculator_pb.ComputeAverageRequest)) {
+    throw new Error('Expected argument of type calculator.ComputeAverageRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_calculator_ComputeAverageRequest(buffer_arg) {
+  return calculator_pb.ComputeAverageRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_calculator_ComputeAverageResponse(arg) {
+  if (!(arg instanceof calculator_pb.ComputeAverageResponse)) {
+    throw new Error('Expected argument of type calculator.ComputeAverageResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_calculator_ComputeAverageResponse(buffer_arg) {
+  return calculator_pb.ComputeAverageResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_calculator_PrimeNumberDecompositonRequest(arg) {
   if (!(arg instanceof calculator_pb.PrimeNumberDecompositonRequest)) {
     throw new Error('Expected argument of type calculator.PrimeNumberDecompositonRequest');
@@ -62,7 +84,7 @@ var CalculatorServiceService = exports.CalculatorServiceService = {
     responseSerialize: serialize_calculator_SumResponse,
     responseDeserialize: deserialize_calculator_SumResponse,
   },
-  // Streaming API
+  // Server Streaming API
   primeNumberDecompositon: {
     path: '/calculator.CalculatorService/PrimeNumberDecompositon',
     requestStream: false,
@@ -73,6 +95,18 @@ var CalculatorServiceService = exports.CalculatorServiceService = {
     requestDeserialize: deserialize_calculator_PrimeNumberDecompositonRequest,
     responseSerialize: serialize_calculator_PrimeNumberDecompositonResponse,
     responseDeserialize: deserialize_calculator_PrimeNumberDecompositonResponse,
+  },
+  // Client Stream API
+  computeAverage: {
+    path: '/calculator.CalculatorService/ComputeAverage',
+    requestStream: true,
+    responseStream: false,
+    requestType: calculator_pb.ComputeAverageRequest,
+    responseType: calculator_pb.ComputeAverageResponse,
+    requestSerialize: serialize_calculator_ComputeAverageRequest,
+    requestDeserialize: deserialize_calculator_ComputeAverageRequest,
+    responseSerialize: serialize_calculator_ComputeAverageResponse,
+    responseDeserialize: deserialize_calculator_ComputeAverageResponse,
   },
 };
 

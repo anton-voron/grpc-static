@@ -44,17 +44,36 @@ class ClientApp {
         })
     }
 
+    callComputeAverage(client) {
+        const request = new calc.ComputeAverageRequest();
+
+        const socket = client.computeAverage(request, (error, response) => {
+            if (!error) {
+                console.log("ComputeAverage Response: ", response.getAverage());
+            } else {
+                console.error(error);
+            }
+        })
+
+        for (let i = 1; i < 5; i++) {
+            const req = new calc.ComputeAverageRequest();
+            req.setNumber(i);
+            socket.write(req);
+        }
+
+        socket.end();
+    }
+
     main() {
         let client = new calcServices.CalculatorServiceClient(
             'localhost:50051',
             grpc.credentials.createInsecure()
         );
 
-        console.log(client);
-
         // we do stuff!
         this.sendRequest(client);
         this.callPrimeNumberDecompositon(client);
+        this.callComputeAverage(client);
     }
 };
 
