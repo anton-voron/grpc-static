@@ -26,6 +26,28 @@ function deserialize_calculator_ComputeAverageResponse(buffer_arg) {
   return calculator_pb.ComputeAverageResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_calculator_FindMaximumRequest(arg) {
+  if (!(arg instanceof calculator_pb.FindMaximumRequest)) {
+    throw new Error('Expected argument of type calculator.FindMaximumRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_calculator_FindMaximumRequest(buffer_arg) {
+  return calculator_pb.FindMaximumRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_calculator_FindMaximumResponse(arg) {
+  if (!(arg instanceof calculator_pb.FindMaximumResponse)) {
+    throw new Error('Expected argument of type calculator.FindMaximumResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_calculator_FindMaximumResponse(buffer_arg) {
+  return calculator_pb.FindMaximumResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_calculator_PrimeNumberDecompositonRequest(arg) {
   if (!(arg instanceof calculator_pb.PrimeNumberDecompositonRequest)) {
     throw new Error('Expected argument of type calculator.PrimeNumberDecompositonRequest');
@@ -107,6 +129,18 @@ var CalculatorServiceService = exports.CalculatorServiceService = {
     requestDeserialize: deserialize_calculator_ComputeAverageRequest,
     responseSerialize: serialize_calculator_ComputeAverageResponse,
     responseDeserialize: deserialize_calculator_ComputeAverageResponse,
+  },
+  // BiDi Stream API
+  findMaximum: {
+    path: '/calculator.CalculatorService/FindMaximum',
+    requestStream: true,
+    responseStream: true,
+    requestType: calculator_pb.FindMaximumRequest,
+    responseType: calculator_pb.FindMaximumResponse,
+    requestSerialize: serialize_calculator_FindMaximumRequest,
+    requestDeserialize: deserialize_calculator_FindMaximumRequest,
+    responseSerialize: serialize_calculator_FindMaximumResponse,
+    responseDeserialize: deserialize_calculator_FindMaximumResponse,
   },
 };
 

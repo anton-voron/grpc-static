@@ -68,12 +68,41 @@ class Application {
         })
     }
 
+    // BiDI Stream API
+    findMaximum(socket, callback) {
+        let currentMaximum = 0;
+        let currentNumber = 0;
+
+        socket.on('data', request => {
+            currentNumber = request.getNumber();
+            if (currentNumber > currentMaximum) {
+                currentMaximum = currentNumber;
+                const response = new calc.FindMaximumResponse();
+                response.setMaximum(currentMaximum);
+                socket.write(response);
+            }
+            console.log(`Streamed number: ${currentNumber}`);
+        });
+
+        socket.on('error', error => {
+            console.error(error);
+        })
+
+        socket.on('end', () => {
+            const response = new calc.FindMaximumResponse();
+            response.setMaximum(currentMaximum);
+            socket.write(response);
+            socket.end();
+        })
+    }
+
     main() {
         let Server = new grpc.Server();
         Server.addService(calcService.CalculatorServiceService, {
             sum: this.sum,
             primeNumberDecompositon: this.primeNumberDecompositon,
-            computeAverage: this.computeAverage
+            computeAverage: this.computeAverage,
+            findMaximum: this.findMaximum
         });
         Server.bind('127.0.0.1:50051', grpc.ServerCredentials.createInsecure());
 

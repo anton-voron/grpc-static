@@ -135,7 +135,7 @@ class ClientApp {
         }));
     }
 
-    sleep(interval) {
+    async sleep(interval) {
         return new Promise((resolve, reject) => {
             setTimeout(() => resolve(), interval);
         })

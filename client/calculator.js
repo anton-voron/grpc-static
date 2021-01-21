@@ -64,6 +64,41 @@ class ClientApp {
         socket.end();
     }
 
+    async sleep(interval) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => resolve(), interval);
+        })
+    }
+
+    async callFindMaximum(client) {
+        const request = new calc.FindMaximumRequest();
+
+        const socket = client.findMaximum(request, (error, response) => { });
+
+        socket.on('data', response => {
+            console.log(`Max form server =>  ${response.getMaximum()}`);
+        });
+
+        socket.on('end', () => {
+            console.log('Server completed sending messages!');
+            socket.end();
+        });
+
+        socket.on('error', error => {
+            console.error(error);
+        });
+
+        for (let i = 0; i < 10; i++) {
+            const number = Math.round(Math.random() * 100);
+            const request = new calc.FindMaximumRequest();
+            request.setNumber(number);
+            socket.write(request);
+            await this.sleep(300);
+        }
+
+        socket.end();
+    }
+
     main() {
         let client = new calcServices.CalculatorServiceClient(
             'localhost:50051',
@@ -71,9 +106,10 @@ class ClientApp {
         );
 
         // we do stuff!
-        this.sendRequest(client);
-        this.callPrimeNumberDecompositon(client);
-        this.callComputeAverage(client);
+        // this.sendRequest(client);
+        // this.callPrimeNumberDecompositon(client);
+        // this.callComputeAverage(client);
+        this.callFindMaximum(client);
     }
 };
 
