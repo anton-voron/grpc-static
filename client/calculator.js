@@ -102,16 +102,36 @@ class ClientApp {
 
     // error handling
     callSquareRoot(client) {
+        let deadline = this.getRPCDeadline(1);
+        console.log('deadline', deadline);
         const number = -321;
         const request = new calc.SquareRootRequest();
         request.setNumber(number);
-        client.squareRoot(request, (error, response) => {
+        // set deadline to limit execution time
+        client.squareRoot(request, { deadline: deadline }, (error, response) => {
             if (!error) {
                 console.log("Calculator Square Root is: ", response.getSquareRoot());
             } else {
                 console.error(error.message);
             }
         })
+    }
+
+    getRPCDeadline(rpcType) {
+        let timeAllowed = 5000;
+        switch (rpcType) {
+            case 1:
+                timeAllowed = 1000;
+                break;
+            case 2:
+                timeAllowed = 7000;
+                break;
+            default:
+                console.log('Invalid RPC Type');
+                break;
+        }
+
+        return new Date(Date.now() + timeAllowed);
     }
 
     main() {

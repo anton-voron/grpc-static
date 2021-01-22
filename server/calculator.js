@@ -105,7 +105,6 @@ class Application {
             callback(null, response);
         } else {
             // error handling
-
             return callback({
                 code: grpc.status.INVALID_ARGUMENT,
                 message: 'The number been sent is not possitive. Number sent: ' + number
@@ -120,7 +119,7 @@ class Application {
             primeNumberDecompositon: this.primeNumberDecompositon,
             computeAverage: this.computeAverage,
             findMaximum: this.findMaximum,
-            squareRoot: this.squareRoot
+            squareRoot: this.squareRoot,
         });
         Server.bind('127.0.0.1:50051', grpc.ServerCredentials.createInsecure());
 
