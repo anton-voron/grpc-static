@@ -70,6 +70,28 @@ function deserialize_calculator_PrimeNumberDecompositonResponse(buffer_arg) {
   return calculator_pb.PrimeNumberDecompositonResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_calculator_SquareRootRequest(arg) {
+  if (!(arg instanceof calculator_pb.SquareRootRequest)) {
+    throw new Error('Expected argument of type calculator.SquareRootRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_calculator_SquareRootRequest(buffer_arg) {
+  return calculator_pb.SquareRootRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_calculator_SquareRootResponse(arg) {
+  if (!(arg instanceof calculator_pb.SquareRootResponse)) {
+    throw new Error('Expected argument of type calculator.SquareRootResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_calculator_SquareRootResponse(buffer_arg) {
+  return calculator_pb.SquareRootResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_calculator_SumRequest(arg) {
   if (!(arg instanceof calculator_pb.SumRequest)) {
     throw new Error('Expected argument of type calculator.SumRequest');
@@ -141,6 +163,19 @@ var CalculatorServiceService = exports.CalculatorServiceService = {
     requestDeserialize: deserialize_calculator_FindMaximumRequest,
     responseSerialize: serialize_calculator_FindMaximumResponse,
     responseDeserialize: deserialize_calculator_FindMaximumResponse,
+  },
+  // Error handling
+  // This RPC will throw an exception if the number is negative
+  squareRoot: {
+    path: '/calculator.CalculatorService/SquareRoot',
+    requestStream: false,
+    responseStream: false,
+    requestType: calculator_pb.SquareRootRequest,
+    responseType: calculator_pb.SquareRootResponse,
+    requestSerialize: serialize_calculator_SquareRootRequest,
+    requestDeserialize: deserialize_calculator_SquareRootRequest,
+    responseSerialize: serialize_calculator_SquareRootResponse,
+    responseDeserialize: deserialize_calculator_SquareRootResponse,
   },
 };
 

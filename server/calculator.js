@@ -96,13 +96,31 @@ class Application {
         })
     }
 
+    squareRoot(socket, callback) {
+        let number = socket.request.getNumber();
+        if (number >= 0) {
+            const numberRoot = Math.sqrt(number);
+            const response = new calc.SquareRootResponse();
+            response.setNumberRoot(numberRoot);
+            callback(null, response);
+        } else {
+            // error handling
+
+            return callback({
+                code: grpc.status.INVALID_ARGUMENT,
+                message: 'The number been sent is not possitive. Number sent: ' + number
+            })
+        }
+    }
+
     main() {
         let Server = new grpc.Server();
         Server.addService(calcService.CalculatorServiceService, {
             sum: this.sum,
             primeNumberDecompositon: this.primeNumberDecompositon,
             computeAverage: this.computeAverage,
-            findMaximum: this.findMaximum
+            findMaximum: this.findMaximum,
+            squareRoot: this.squareRoot
         });
         Server.bind('127.0.0.1:50051', grpc.ServerCredentials.createInsecure());
 

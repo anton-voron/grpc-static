@@ -36,6 +36,14 @@ message FindMaximumResponse {
     int32 maximum = 1;
 }
 
+message SquareRootRequest {
+    int32 number = 1;
+}
+
+message SquareRootResponse {
+    double number_root = 1;
+}
+
 service CalculatorService {
 
     // Unary API
@@ -49,4 +57,9 @@ service CalculatorService {
 
     // BiDi Stream API
     rpc FindMaximum (stream FindMaximumRequest) returns (stream FindMaximumResponse) {};
+
+
+    // Error handling
+    // This RPC will throw an exception if the number is negative
+    rpc SquareRoot (SquareRootRequest) returns (SquareRootResponse) {};
 }

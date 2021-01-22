@@ -99,6 +99,21 @@ class ClientApp {
         socket.end();
     }
 
+
+    // error handling
+    callSquareRoot(client) {
+        const number = -321;
+        const request = new calc.SquareRootRequest();
+        request.setNumber(number);
+        client.squareRoot(request, (error, response) => {
+            if (!error) {
+                console.log("Calculator Square Root is: ", response.getSquareRoot());
+            } else {
+                console.error(error.message);
+            }
+        })
+    }
+
     main() {
         let client = new calcServices.CalculatorServiceClient(
             'localhost:50051',
@@ -109,7 +124,8 @@ class ClientApp {
         // this.sendRequest(client);
         // this.callPrimeNumberDecompositon(client);
         // this.callComputeAverage(client);
-        this.callFindMaximum(client);
+        // this.callFindMaximum(client);
+        this.callSquareRoot(client);
     }
 };
 
