@@ -1,7 +1,7 @@
 const grpc = require('grpc');
 const calc = require('./protos/calculator_pb');
 const calcService = require('./protos/calculator_grpc_pb');
-const { write } = require('fs/promises');
+const fs = require('fs');
 
 class Application {
 
@@ -113,6 +113,14 @@ class Application {
     }
 
     main() {
+        const credentials = grpc.ServerCredentials.createSsl(
+            fs.readFileSync('../certs/ca.crt'), [{
+                cert_chain: fs.readFileSync('../certs/server.crt'),
+                private_key: fs.readFileSync('../certs/server.key')
+            }], true);
+
+        const unsafeCreds = grpc.ServerCredentials.createInsecure();
+
         let Server = new grpc.Server();
         Server.addService(calcService.CalculatorServiceService, {
             sum: this.sum,
@@ -121,7 +129,7 @@ class Application {
             findMaximum: this.findMaximum,
             squareRoot: this.squareRoot,
         });
-        Server.bind('127.0.0.1:50051', grpc.ServerCredentials.createInsecure());
+        Server.bind('127.0.0.1:50051', credentials);
 
         Server.start();
 

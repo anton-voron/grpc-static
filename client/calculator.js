@@ -1,6 +1,7 @@
 const grpc = require('grpc');
 const calc = require('../server/protos/calculator_pb');
 const calcServices = require('../server/protos/calculator_grpc_pb');
+const fs = require('fs');
 
 class ClientApp {
 
@@ -135,9 +136,17 @@ class ClientApp {
     }
 
     main() {
+        const credentials = grpc.credentials.createSsl(
+            fs.readFileSync('../certs/ca.crt'),
+            fs.readFileSync('../certs/client.key'),
+            fs.readFileSync('../certs/client.crt')
+        );
+
+        const unsafeCreds = grpc.credentials.createInsecure();
+
         let client = new calcServices.CalculatorServiceClient(
             'localhost:50051',
-            grpc.credentials.createInsecure()
+            credentials
         );
 
         // we do stuff!
@@ -145,7 +154,7 @@ class ClientApp {
         // this.callPrimeNumberDecompositon(client);
         // this.callComputeAverage(client);
         // this.callFindMaximum(client);
-        this.callSquareRoot(client);
+        // this.callSquareRoot(client);
     }
 };
 

@@ -1,6 +1,7 @@
 const grpc = require('grpc');
 const greets = require('./protos/greet_pb');
 const services = require('./protos/greet_grpc_pb');
+const fs = require('fs');
 
 // Implement the greet gRPC methods
 
@@ -87,6 +88,13 @@ class Application {
     }
 
     main() {
+        const credentials = grpc.ServerCredentials.createSsl(
+            fs.readFileSync('../certs/ca.crt'), [{
+                cert_chain: fs.readFileSync('../certs/server.crt'),
+                private_key: fs.readFileSync('../certs/server.key')
+            }], true);
+
+        const unsafeCreds = grpc.ServerCredentials.createInsecure();
         let Server = new grpc.Server();
         Server.addService(services.GreetServiceService, {
             greet: this.greet,
@@ -95,7 +103,7 @@ class Application {
             greetEveryone: this.greetEveryone,
             sleep: this.sleep
         });
-        Server.bind('127.0.0.1:50051', grpc.ServerCredentials.createInsecure());
+        Server.bind('127.0.0.1:50051', credentials);
 
         Server.start();
 

@@ -2,6 +2,7 @@ const grpc = require('grpc');
 const greets = require('../server/protos/greet_pb');
 const services = require('../server/protos/greet_grpc_pb');
 const readline = require('readline');
+const fs = require('fs');
 
 class ClientApp {
 
@@ -168,30 +169,36 @@ class ClientApp {
         });
 
         // Read data from console
-        // const greeting = new greets.Greeting();
-        // await this.readline(socket, greeting, (answer) => {
-        //     const { firstName, lastName } = answer;
-        //     greeting.setFirstName(firstName);
-        //     greeting.setLastName(lastName);
-        // });
+        const greeting = new greets.Greeting();
+        await this.readline(socket, greeting, (answer) => {
+            const { firstName, lastName } = answer;
+            greeting.setFirstName(firstName);
+            greeting.setLastName(lastName);
+        });
 
-        for (let i = 0; i < 10; i++) {
-            const greeting = new greets.Greeting();
-            greeting.setFirstName('Paulo');
-            greeting.setLastName('Moranie');
+        // for (let i = 0; i < 10; i++) {
+        //     const greeting = new greets.Greeting();
+        //     greeting.setFirstName('Paulo');
+        //     greeting.setLastName('Moranie');
 
-            const request = new greets.GreetEveryoneRequest();
-            request.setGreeting(greeting);
-            socket.write(request);
-            await this.sleep(300);
-        }
+        //     const request = new greets.GreetEveryoneRequest();
+        //     request.setGreeting(greeting);
+        //     socket.write(request);
+        //     await this.sleep(300);
+        // }
     }
 
     main() {
-        console.log("Hello form client");
+        const credentials = grpc.credentials.createSsl(
+            fs.readFileSync('../certs/ca.crt'),
+            fs.readFileSync('../certs/client.key'),
+            fs.readFileSync('../certs/client.crt')
+        );
+        const unsafeCreds = grpc.credentials.createInsecure();
+
         let client = new services.GreetServiceClient(
             'localhost:50051',
-            grpc.credentials.createInsecure()
+            credentials
         );
 
         // we do stuff!
